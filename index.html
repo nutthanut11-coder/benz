@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ใบเสร็จรับเงิน | รุ่งเรืองพาณิชย์ค้าข้าว</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="assets/logo.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="appbar">
+    <div class="brand">
+      <img src="assets/logo.png" class="brand__logo" alt="โลโก้">
+      <div>
+        <h1>ใบเสร็จรับเงิน • รุ่งเรืองพาณิชย์ค้าข้าว</h1>
+        <small>Mobile-first • ตรงแบบ 4 คอลัมน์ • พิมพ์ A4</small>
+      </div>
+    </div>
+    <div class="appbar__actions">
+      <button id="btnAddCustomer" class="btn">+ เพิ่มลูกค้า</button>
+      <button id="btnSave" class="btn btn--primary">บันทึก</button>
+      <button id="btnPrint" class="btn btn--accent">สร้าง PDF</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>ลูกค้า</h2>
+      <div class="grid g3">
+        <label>นามผู้ซื้อ
+          <select id="customerSelect"></select>
+        </label>
+        <label>เลขประจำตัวผู้เสียภาษี
+          <input id="custTaxId" />
+        </label>
+        <label>วันที่เอกสาร
+          <input id="docDate" type="date" />
+        </label>
+      </div>
+      <label>ที่อยู่
+        <textarea id="custAddr" rows="2"></textarea>
+      </label>
+    </section>
+
+    <section class="card">
+      <div class="card__head">
+        <h2>รายการสินค้า/บริการ</h2>
+        <button id="btnAddRow" class="btn btn--primary">+ เพิ่มแถว</button>
+      </div>
+      <div class="tableWrap">
+        <table class="table" id="itemsTable">
+          <thead>
+            <tr>
+              <th style="width:15%">จำนวน</th>
+              <th>รายการสินค้า</th>
+              <th style="width:18%">ราคา</th>
+              <th style="width:22%">จำนวนเงิน (บาท)</th>
+              <th style="width:40px"></th>
+            </tr>
+          </thead>
+          <tbody id="itemsBody"></tbody>
+        </table>
+      </div>
+
+      <div class="totals">
+        <div class="grand">ยอดรวม (บาท): <span id="grandTotal">0.00</span></div>
+        <div class="bahtline">รวมเป็นเงิน (ตัวอักษร): <span id="bahtText">ศูนย์บาทถ้วน</span></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>ลายเซ็น</h2>
+      <div class="signs">
+        <div class="sign">ผู้จัดการ ..........................................</div>
+        <div class="sign">ผู้รับเงิน ..........................................</div>
+      </div>
+    </section>
+  </main>
+
+  <!-- PRINT AREA -->
+  <section id="printArea" class="print A4">
+    <div class="sheet">
+      <div class="head text-center">
+        <div class="h-title">บริษัท รุ่งเรืองพาณิชย์ค้าข้าว จำกัด (สำนักงานใหญ่)</div>
+        <div>561-565 ชั้น4 ถนนเยาวราช แขวงสัมพันธวงศ์ เขตสัมพันธวงศ์ กรุงเทพฯ 10100</div>
+        <div>โทรศัพท์.09-7216-4731 แฟกซ์ 02-222-8657  เลขประจำตัวผู้เสียภาษี 0105562016019</div>
+        <div class="doc-title">ใบเสร็จรับเงิน</div>
+      </div>
+
+      <table class="box meta">
+        <tr>
+          <td style="width:70%">
+            นามผู้ซื้อ : <span id="p_custName">-</span><br>
+            เลขประจำตัวผู้เสียภาษี : <span id="p_custTaxId">-</span><br>
+            ที่อยู่ : <span id="p_custAddr">-</span>
+          </td>
+          <td style="width:30%; text-align:right">วันที่: <span id="p_docDate">-</span></td>
+        </tr>
+      </table>
+
+      <table class="box items">
+        <thead>
+          <tr>
+            <th style="width:20%">จำนวน</th>
+            <th>รายการสินค้า</th>
+            <th style="width:20%">ราคา</th>
+            <th style="width:25%">จำนวนเงิน (บาท)</th>
+          </tr>
+        </thead>
+        <tbody id="p_itemsBody"></tbody>
+      </table>
+
+      <table class="box total">
+        <tr>
+          <td style="width:70%">รวมเป็นเงิน (ตัวอักษร): <span id="p_bahtText">ศูนย์บาทถ้วน</span></td>
+          <td style="width:30%; text-align:right"><span id="p_grandTotal">0.00</span></td>
+        </tr>
+      </table>
+
+      <div class="foot-signs">
+        <div>ผู้จัดการ ..........................................................</div>
+        <div>ผู้รับเงิน ..........................................................</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL: Add customer -->
+  <dialog id="dlgCustomer">
+    <form method="dialog" class="dialog">
+      <h3>เพิ่มลูกค้าใหม่</h3>
+      <label>ชื่อบริษัท <input id="new_cust_name" required></label>
+      <label>เลขประจำตัวผู้เสียภาษี <input id="new_cust_tax"></label>
+      <label>ที่อยู่ <textarea id="new_cust_addr" rows="2"></textarea></label>
+      <div class="row right">
+        <button value="cancel" class="btn">ยกเลิก</button>
+        <button id="btnDlgSave" class="btn btn--primary" value="ok">บันทึก</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="customers.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
